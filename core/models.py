@@ -43,7 +43,6 @@ class Profile(models.Model):
 
 
 class Task(models.Model):
-
     user = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='profile')
     title = models.CharField('Task Title', max_length=50)
     description = models.CharField('Task description', max_length=50)
