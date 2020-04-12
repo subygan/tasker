@@ -1,10 +1,11 @@
 from django.http import HttpResponse, HttpResponseRedirect
-from .forms import SignupForm, SigninForm
+from .forms import SignupForm, SigninForm, CreateTaskForm
 from django.shortcuts import render
 import datetime
 from . import models
+from .models import Task, Profile
 from django.core.exceptions import ObjectDoesNotExist
-import json
+from django.urls import reverse
 
 
 def index(request):
@@ -71,7 +72,7 @@ def sign_in(request):
                 form.add_error('password', 'password is not as expected')
 
             print("i")
-
+            
             return HttpResponseRedirect('/profile/')
 
     # if a GET (or any other method) we'll create a blank form
@@ -82,7 +83,7 @@ def sign_in(request):
 
 
 def profile(request):
-
+    print("ru", request.user)
     if request.session:
         print('<<<=====>>>')
         user_data = request.session['profile']
@@ -91,3 +92,35 @@ def profile(request):
         return HttpResponseRedirect('/profile/')
 
 
+def create_task(request):
+    """
+    view to create task
+    :param request:
+    :return:
+    """
+    print("ru", request.user)
+    if request.method == 'POST':
+        form = CreateTaskForm(request.POST)
+
+        if form.is_valid():
+            user_data = request.session['profile']
+            user = Profile.objects.get(username = user_data['username'])
+            task = Task.objects.create(user = user,
+                                       title = form.cleaned_data['title'],
+                                       description = form.cleaned_data['description'],
+                                       start_time = form.cleaned_data['start_time'],
+                                       completion_time = form.cleaned_data['completion_time']
+                                       )
+            # task = form.save(commit  =false)
+            task.save()
+        
+            return HttpResponseRedirect(reverse('profile'))
+    else:
+        
+        form = CreateTaskForm()
+
+    context = {
+        'form': form,
+    }
+
+    return render(request, 'create_task_form.html', context)

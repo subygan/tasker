@@ -1,5 +1,18 @@
 # TASKER
 
+### Setup
+
+`sudo pip install pyenv`
+
+`pyenv install 3.6.9`
+
+`pyenv virtualenv 3.6.9 taskenv`
+        
+`pyenv activate blogenv`
+
+`pip install -r requirements.txt`
+
+`python manage.py runserver`
 
 ### What's working :
 
